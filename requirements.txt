@@ -1,0 +1,3 @@
+dvc[gdrive]==2.10.2
+tensorflow==2.8
+typer==0.4.1

@@ -1,0 +1,105 @@
+name: Train Trigger
+
+env:
+  CLOUD_ID: ${{ secrets.JARVISLABS_USER_EMAIL }}
+  CLOUD_AT: ${{ secrets.JARVISLABS_ACCESS_TOKEN }}
+
+on:
+  pull_request:
+    types: [opened]
+    
+  issue_comment:
+    types: [created]
+
+jobs:
+  experiments-on-jarvislabs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: octokit/request-action@v2.0.0
+        name: GitHub API Request
+        id: request
+        with:
+          route: ${{ github.event.issue.pull_request.url }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get PR informations
+        id: pr_data  
+        run: |
+          echo "::set-output name=number::${{ fromJson(steps.request.outputs.data).number }}"
+          echo "::set-output name=branch::${{ fromJson(steps.request.outputs.data).head.ref }}"
+          echo "::set-output name=repo_owner::${{ github.event.repository.owner.login }}"
+          echo "::set-output name=comment_owner::${{ github.event.sender.login }}"
+          echo "::set-output name=comment::${{ github.event.comment.body }}"
+          
+      - name: Extract comment
+        if: ${{ steps.pr_data.outputs.repo_owner == steps.pr_data.outputs.comment_owner }}
+        run: |
+          echo "Eligible!!"
+        
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        name: Listen to comment on PR (training)
+        id: check
+        if: ${{ steps.pr_data.outputs.repo_owner == steps.pr_data.outputs.comment_owner }}
+        with:
+          trigger: '#train'
+          reaction: rocket
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+
+      - uses: actions/checkout@v3
+        name: clone branch of PR
+        if: steps.check.outputs.triggered == 'true'        
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ steps.pr_data.outputs.branch }}
+
+      - name: prepare script
+        if: steps.check.outputs.triggered == 'true'      
+        env:
+          CUR_BRANCH: ${{ steps.pr_data.outputs.branch }}
+          CUR_PR_ID: ${{ steps.pr_data.outputs.number }}
+          GDRIVE_CREDENTIAL: ${{ secrets.GDRIVE_CREDENTIAL }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          CLOUD_ID: ${{ env.CLOUD_ID }}
+          CLOUD_AT: ${{ env.CLOUD_AT }}
+        run: |
+          envsubst \
+            '$CUR_BRANCH, \
+             $CUR_PR_ID, \
+             $GDRIVE_CREDENTIAL, \
+             $GH_ACCESS_TOKEN, \
+             $CLOUD_ID, \
+             $CLOUD_AT' \
+             < scripts/experiments.sh \
+             > scripts/experiments_tmp.sh
+             
+      - name: install jarvislabs client
+        if: steps.check.outputs.triggered == 'true'      
+        run: |
+          pip install typer
+          pip install git+https://github.com/jarvislabsai/jlclient.git
+          
+      - name: add script to jarvislabs
+        id: add_script
+        if: steps.check.outputs.triggered == 'true'        
+        run: |
+          python clouds/jarvislabs.py \
+            script add \
+              ${{ env.CLOUD_AT }} ${{ env.CLOUD_ID }} scripts/experiments_tmp.sh \
+                > outputs.txt
+          echo "::set-output name=script_id::$(cat outputs.txt)"
+          
+      - name: create vm on jarvislabs
+        if: steps.check.outputs.triggered == 'true'      
+        run: |
+          python clouds/jarvislabs.py \
+            vm create \
+              ${{ env.CLOUD_AT }} ${{ env.CLOUD_ID }} ${{ steps.add_script.outputs.script_id }}
+              
+      - name: remove script from jarvislabs
+        if: steps.check.outputs.triggered == 'true'      
+        run: |
+          python clouds/jarvislabs.py \
+            script remove \
+              ${{ env.CLOUD_AT }} ${{ env.CLOUD_ID }} ${{ steps.add_script.outputs.script_id }}
