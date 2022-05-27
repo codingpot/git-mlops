@@ -1,5 +1,6 @@
 import os
 import glob
+import json
 import typer
 import pathlib
 from huggingface_hub import HfApi
@@ -25,11 +26,10 @@ def create_or_repo(token: str,
                            repo_id=repo_id, 
                            repo_type=repo_type,
                            space_sdk=(space_sdk if repo_type == 'space' else None))
-        typer.echo({'status': 'success', 'repo_id': repo_id})
-
+        typer.echo(json.dumps({'status': 'success', 'repo_id': repo_id}))
     except HTTPError:
-        typer.echo({'status': 'fail', 'repo_id': repo_id})
-
+        typer.echo(json.dumps({'status': 'success', 'repo_id': repo_id}))
+        
 def _check_allowed_file(filepath):
     prohibited_extensions = ['.dvc', '.gitignore', '.json']
 
@@ -42,14 +42,14 @@ def _upload_files(hf_api,
                   token: str, 
                   repo_id: str,
                   path: str,
-                  repo_type):
+                  repo_type: str):
     count = 0
-    print(path)    
 
     if os.path.isdir(path):
         for filepath in glob.iglob(f'{path}/**/**', recursive=True):
             if os.path.isdir(filepath) is False and \
                _check_allowed_file(filepath):
+                typer.echo(filepath)
                 hf_api.upload_file(path_or_fileobj=filepath,
                                 path_in_repo=filepath,
                                 repo_id=repo_id,
@@ -75,12 +75,11 @@ def upload_to_repo(token: str,
     hf_api = HfApi()
     hf_api.set_access_token(token)
 
-    # try:
-    count = _upload_files(hf_api, token, repo_id, path, repo_type)
-        typer.echo({'status': 'success', 'count': count})
-
+    try:
+        count = _upload_files(hf_api, token, repo_id, path, repo_type)
+        typer.echo(json.dumps({'status': 'success', 'count': f'{count}'}))
     except ValueError:
-        typer.echo({'status': 'fail'})
+        typer.echo(json.dumps({'status': 'fail', 'count': f'{0}'}))
 
 if __name__ == "__main__":
     app()
