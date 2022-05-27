@@ -43,15 +43,16 @@ $ dvc stage add -n evaluate \
                 -M outputs/metrics.json \
                 python pipeline/evaluate.py outputs/model
 ```
-11. Run `git add . && git commit -m "add initial pipeline setup" && git push origin main`
-12. Run `dvc repro` to run the pipeline initially
-13. Run `dvc add outputs/model.tar.gz` to add compressed version of model 
-14. Run `dvc push outputs/model.tar.gz`
-15. Run `echo "/pipeline/__pycache__" >> .gitignore` to ignore unnecessary directory
-16. Run `git add . && git commit -m "add initial pipeline run" && git push origin main`
-17. Add access token and user email of [JarvisLabs.ai](https://jarvislabs.ai/) to GitHub Secret as `JARVISLABS_ACCESS_TOKEN` and `JARVISLABS_USER_EMAIL`
-18. Add GitHub access token to GitHub Secret as `GH_ACCESS_TOKEN`
-19. Create a PR and write `#train` as in comment (you have to be the onwer of the repo)
+11. Update `params.yaml` as you need.
+12. Run `git add . && git commit -m "add initial pipeline setup" && git push origin main`
+13. Run `dvc repro` to run the pipeline initially
+14. Run `dvc add outputs/model.tar.gz` to add compressed version of model 
+15. Run `dvc push outputs/model.tar.gz`
+16. Run `echo "/pipeline/__pycache__" >> .gitignore` to ignore unnecessary directory
+17. Run `git add . && git commit -m "add initial pipeline run" && git push origin main`
+18. Add access token and user email of [JarvisLabs.ai](https://jarvislabs.ai/) to GitHub Secret as `JARVISLABS_ACCESS_TOKEN` and `JARVISLABS_USER_EMAIL`
+19. Add GitHub access token to GitHub Secret as `GH_ACCESS_TOKEN`
+20. Create a PR and write `#train` as in comment (you have to be the onwer of the repo)
 
 ## TODO
 
