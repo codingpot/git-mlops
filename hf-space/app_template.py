@@ -12,7 +12,7 @@ def load_model(tar_file: str='outputs/model.tar.gz'):
     model_path = 'model'
     return keras.models.load_model(model_path)
 
-hf_hub_download(repo_id=$MODEL_REPO_ID, filename='outputs/model.tar.gz')
+hf_hub_download(repo_id='$MODEL_REPO_ID', filename='outputs/model.tar.gz')
 model = load_model()
 labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
