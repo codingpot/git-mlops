@@ -6,6 +6,14 @@ This project shows how to achieve MLOps using tools such as [DVC](https://dvc.or
 
 ## Instructions
 
+### Prior work
+
+1. Click "Use this template" button to create your own repository
+2. Wait for few seconds, then `Initial Setup` PR will be automatically created
+3. Merge the PR, and you are good to go
+
+### After your repos is setup
+
 0. Run `pip install -r requirements.txt` ([requirements.txt](https://github.com/codingpot/git-mlops/blob/main/requirements.txt))
 1. Run `dvc init` to enable DVC
 2. Add your data under `data` directory
