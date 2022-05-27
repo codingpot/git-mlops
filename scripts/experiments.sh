@@ -13,7 +13,7 @@ git config --global user.name "chansung"
 git config --global user.email "deep.diver.csp@gmail.com"
 
 # move to the repo
-git clone https://github.com/deep-diver/git-mlops.git
+git clone https://github.com/codingpot/git-mlops.git
 
 # install dependencies
 cd git-mlops
