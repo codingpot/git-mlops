@@ -20,7 +20,7 @@ This project shows how to achieve MLOps using tools such as [DVC](https://dvc.or
 3. Run `dvc add [ADDED FILE OR DIRECTORY]` to track your data with DVC
 4. Run `dvc remote add -d gdrive_storage gdrive://[ID of specific folder in gdrive]` to add Google Drive as the remote data storage
 5. Run `dvc push`, then URL to auth is provided. Copy and paste it to the browser, and autheticate
-6. Copy the content of `.dvc/tmp/gdrive-user-credentials.json` and put it as in [GitHub Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) with the name of `GDRIVE_CREDENTIAL`
+6. Copy the content of `.dvc/tmp/gdrive-user-credentials.json` and put it as in [GitHub Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) with the name of `GDRIVE_CREDENTIALS`
 7. Run `git add . && git commit -m "initial commit" && git push origin main` to keep the initial setup
 8. Write your own pipeline under `pipeline` directory. Codes for basic image classification in TensorFlow are provided initially.
 9. Run the following `dvc stage add` for training stage
