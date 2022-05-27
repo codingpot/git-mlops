@@ -2,6 +2,7 @@ name: Hugging Face Deployment
 
 env:
   HF_AT: ${{ secrets.HF_AT }}
+  HF_USER_ID: ${{ secrets.HF_USER_ID }}
   
 on:
   pull_request:
