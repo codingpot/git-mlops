@@ -3,6 +3,7 @@ name: Hugging Face Deployment
 env:
   HF_AT: ${{ secrets.HF_AT }}
   HF_USER_ID: ${{ secrets.HF_USER_ID }}
+  GDRIVE_CREDENTIAL: ${{ secrets.GDRIVE_CREDENTIAL }}
   
 on:
   pull_request:
@@ -54,11 +55,18 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ steps.pr_data.outputs.branch }}
-          
+
       - name: Install Python packages
         if: steps.check.outputs.triggered == 'true'
         run: |
-          pip install requirements.txt
+          pip install -r requirements.txt
+          
+      - name: Get Current Version of Model
+        if: steps.check.outputs.triggered == 'true'
+        run: |
+          mkdir .dvc/tmp
+          echo '${{ env.GDRIVE_CREDENTIAL }}' > .dvc/tmp/gdrive-user-credentials.json
+          dvc pull outputs/model.tar.gz
 
       - name: Create or get HF's model repo
         id: hf_model
@@ -68,40 +76,38 @@ jobs:
             repo create \
               ${{ env.HF_AT }} ${{ env.HF_USER_ID }} ${{ steps.pr_data.outputs.repo_name }} --repo-type model \
                 > outputs.json
-          content=$(cat outputs.json)
-          echo "::set-output name=status::${{ fromJson($content).status }}"
-          echo "::set-output name=repo_id::${{ fromJson($content).repo_id }}"
+
+          echo "::set-output name=result::$(cat outputs.json)"
 
       - name: Upload model to HF's model repo
         id: hf_model_upload
-        if: steps.hf_model.outputs.status == 'success'
+        if: fromJSON(steps.hf_model.outputs.result).status == 'success'
         run: |
           python clouds/huggingface.py \
             repo upload \
-              ${{ env.HF_AT }} ${{ steps.hf_model.outputs.repo_id }} \
+              ${{ env.HF_AT }} ${{ fromJSON(steps.hf_model.outputs.result).repo_id }} \
                 > outputs.json
-          content=$(cat outputs.json)
-          echo "::set-output name=status::${{ fromJson($content).status }}"
+
+          echo "::set-output name=result::$(cat outputs.json)"
       
       - name: Create or get HF's space repo
         id: hf_space
-        if: steps.hf_model_upload.outputs.status == 'success'
+        if: fromJSON(steps.hf_model_upload.outputs.result).status == 'success'
         run: |
           python clouds/huggingface.py \
             repo create \
               ${{ env.HF_AT }} ${{ env.HF_USER_ID }} ${{ steps.pr_data.outputs.repo_name }} --repo-type space \
                 > outputs.json
-          content=$(cat outputs.json)
-          echo "::set-output name=status::${{ fromJson($content).status }}"
-          echo "::set-output name=repo_id::${{ fromJson($content).repo_id }}"          
+
+          echo "::set-output name=result::$(cat outputs.json)"
       
       - name: Upload app to HF's space repo
-        if: steps.hf_space.outputs.status == 'success'
+        if: fromJSON(steps.hf_space.outputs.result).status == 'success'
         env:
-          MODEL_REPO_ID: ${{ steps.hf_model.outputs.repo_id }}
+          MODEL_REPO_ID: ${{ fromJSON(steps.hf_model.outputs.result).repo_id }}
         run: |
           envsubst '$MODEL_REPO_ID' < hf-space/app_template.py > hf-space/app.py
           rm hf-space/app_template.py
           python clouds/huggingface.py \
             repo upload \ 
-              ${{ env.HF_AT }} ${{ steps.hf_space.outputs.repo_id }} --repo-type space --path hf-space
+              ${{ env.HF_AT }} ${{ fromJSON(steps.hf_space.outputs.result).repo_id }} --repo-type space --path hf-space
