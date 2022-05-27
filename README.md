@@ -26,7 +26,7 @@ This project shows how to achieve MLOps using tools such as [DVC](https://dvc.or
 9. Run the following `dvc stage add` for training stage
 ```bash
 $ dvc stage add -n train \
-                -p train.train_size,train.batch_size,train.epoch,train.lr \ # no space between items
+                -p train.train_size,train.batch_size,train.epoch,train.lr \
                 -d pipeline/modeling.py -d pipeline/train.py -d data \
                 --plots-no-cache dvclive/scalars/loss.tsv \
                 --plots-no-cache dvclive/scalars/sparse_categorical_accuracy.tsv \
