@@ -46,7 +46,8 @@ do
    echo ${exp_ids[$idx]}
    echo ${exp_names[$idx]}
    dvc exp branch ${exp_ids[$idx]} ${exp_names[$idx]}
-   dvc push
+   dvc add outputs/model.tar.gz
+   dvc push outputs/model.tar.gz
    git branch -m ${exp_names[$idx]} exp-$cur_branch-${exp_names[$idx]}
    git checkout exp-$cur_branch-${exp_names[$idx]}
    git push origin exp-$cur_branch-${exp_names[$idx]}
