@@ -1,0 +1,15 @@
+train:
+  train: train
+  test: test
+
+  train_size: 128
+  batch_size: 32
+
+  epoch: 1
+  lr: 0.001
+
+evaluate:
+  test: test
+  batch_size: 32
+
+  metrics: outputs/metrics.json
