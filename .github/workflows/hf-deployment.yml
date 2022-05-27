@@ -74,7 +74,7 @@ jobs:
         run: |
           python clouds/huggingface.py \
             repo create \
-              ${{ env.HF_AT }} ${{ env.HF_USER_ID }} ${{ steps.pr_data.outputs.repo_name }} --repo-type model \
+              "${{ env.HF_AT }}" "${{ env.HF_USER_ID }}" "${{ steps.pr_data.outputs.repo_name }}" --repo-type "model" \
                 > outputs.json
 
           echo "::set-output name=result::$(cat outputs.json)"
@@ -85,7 +85,7 @@ jobs:
         run: |
           python clouds/huggingface.py \
             repo upload \
-              ${{ env.HF_AT }} ${{ fromJSON(steps.hf_model.outputs.result).repo_id }} \
+              "${{ env.HF_AT }}" "${{ fromJSON(steps.hf_model.outputs.result).repo_id }}" \
                 > outputs.json
 
           echo "::set-output name=result::$(cat outputs.json)"
@@ -96,18 +96,18 @@ jobs:
         run: |
           python clouds/huggingface.py \
             repo create \
-              ${{ env.HF_AT }} ${{ env.HF_USER_ID }} ${{ steps.pr_data.outputs.repo_name }} --repo-type space \
+              "${{ env.HF_AT }}" "${{ env.HF_USER_ID }}" "${{ steps.pr_data.outputs.repo_name }}" --repo-type "space" \
                 > outputs.json
 
           echo "::set-output name=result::$(cat outputs.json)"
       
       - name: Upload app to HF's space repo
         if: fromJSON(steps.hf_space.outputs.result).status == 'success'
-        env:
-          MODEL_REPO_ID: ${{ fromJSON(steps.hf_model.outputs.result).repo_id }}
         run: |
+          export MODEL_REPO_ID=${{ fromJSON(steps.hf_model.outputs.result).repo_id }}        
           envsubst '$MODEL_REPO_ID' < hf-space/app_template.py > hf-space/app.py
+          cat hf-space/app.py
           rm hf-space/app_template.py
           python clouds/huggingface.py \
             repo upload \ 
-              ${{ env.HF_AT }} ${{ fromJSON(steps.hf_space.outputs.result).repo_id }} --repo-type space --path hf-space
+              "${{ env.HF_AT }}" "${{ fromJSON(steps.hf_space.outputs.result).repo_id }}" --repo-type "space" --path "hf-space"
