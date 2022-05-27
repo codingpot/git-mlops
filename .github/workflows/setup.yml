@@ -24,7 +24,7 @@ jobs:
         
         script_path = Path('scripts/experiments.sh')
         script = script_path.read_text().replace('codingpot', username)
-        script = readme.replace('git-mlops', repo_name)
+        script = script.replace('git-mlops', repo_name)
         
         script_path.write_text(script)
       shell: python
