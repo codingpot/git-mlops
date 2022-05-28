@@ -1,2 +1,2 @@
 tensorflow
-huggingface-hub
+huggingface-hub=2.8
