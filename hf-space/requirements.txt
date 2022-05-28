@@ -1,2 +1,2 @@
-tensorflow==2.8
-huggingface-hub==0.7.0
+tensorflow
+huggingface-hub
