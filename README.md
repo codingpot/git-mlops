@@ -12,7 +12,7 @@ This project shows how to achieve MLOps using tools such as [DVC](https://dvc.or
 2. Wait for few seconds, then `Initial Setup` PR will be automatically created
 3. Merge the PR, and you are good to go
 
-### After your repos is setup
+### Basic setup
 
 0. Run `pip install -r requirements.txt` ([requirements.txt](https://github.com/codingpot/git-mlops/blob/main/requirements.txt))
 1. Run `dvc init` to enable DVC
@@ -55,10 +55,16 @@ $ dvc stage add -n evaluate \
 19. Add GitHub access token to GitHub Secret as `GH_ACCESS_TOKEN`
 20. Create a PR and write `#train` as in comment (you have to be the onwer of the repo)
 
+### HuggingFace Integration Setup
+
+1. Add access token of HugginFace to GitHub Secret as `HF_AT`
+2. Add username of HugginfFace to GitHub Secret as `HF_USER_ID`
+3. Write `#deploy-hf` in comment of PR you want to deploy to HuggingFace Space
+
 ## TODO
 
 - [X] Write solid steps to reproduce this repo for other tasks 
-- [ ] Deploy experimental model to [HF Space](https://huggingface.co/spaces)
+- [X] Deploy experimental model to [HF Space](https://huggingface.co/spaces)
 - [ ] Deploy current model to [GKE](https://cloud.google.com/kubernetes-engine) with [auto TFServing deployment project](https://github.com/deep-diver/ml-deployment-k8s-tfserving)
 - [ ] Add more cloud providers
 - [ ] Add more scripts
