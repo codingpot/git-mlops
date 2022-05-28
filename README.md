@@ -68,7 +68,9 @@ $ dvc stage add -n evaluate \
 - [X] Write solid steps to reproduce this repo for other tasks 
 - [X] Deploy experimental model to [HF Space](https://huggingface.co/spaces)
 - [ ] Deploy current model to [GKE](https://cloud.google.com/kubernetes-engine) with [auto TFServing deployment project](https://github.com/deep-diver/ml-deployment-k8s-tfserving)
-- [ ] Add more cloud providers
+- [ ] Add more cloud providers offering GPU VMs
+  - [X] [JarvisLabs.ai](https://jarvislabs.ai/)
+  - [ ] [DataCrunch.io](https://datacrunch.io/)
 - [ ] Add more scripts
 
 ## Brief description of each tools
