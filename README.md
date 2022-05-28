@@ -1,6 +1,7 @@
 # Git Based MLOps
 
-![](https://i.ibb.co/bFQwVJY/Screen-Shot-2022-05-28-at-2-53-55-PM.png)
+<img src="https://pbs.twimg.com/media/FTnBpr2UUAUERMC?format=jpg&name=4096x4096" width="100%"/>
+<img src="https://i.ibb.co/FVzrFFQ/Screen-Shot-2022-05-28-at-2-55-52-PM.png" width="100%"/>
 
 This project shows how to achieve MLOps using tools such as [DVC](https://dvc.org/), [DVC Studio](https://studio.iterative.ai/), [DVCLive](https://dvc.org/doc/dvclive) - all products built by [iterative.ai](https://iterative.ai/), [Google Drive](https://www.google.com/drive/), [Jarvislabs.ai](https://jarvislabs.ai/), and [HuggingFace Hub](https://github.com/huggingface/huggingface_hub).
 
