@@ -65,7 +65,6 @@ def _upload_files(hf_api,
         for filepath in glob.iglob(f'{path}/**/**', recursive=True):
             if os.path.isdir(filepath) is False and \
                _check_allowed_file(filepath):
-
                 hf_api.upload_file(path_or_fileobj=filepath,
                                 path_in_repo='/'.join(filepath.split('/')[1:]),
                                 repo_id=repo_id,
