@@ -71,7 +71,10 @@ $ dvc stage add -n evaluate \
 - [ ] Add more cloud providers offering GPU VMs
   - [X] [JarvisLabs.ai](https://jarvislabs.ai/)
   - [ ] [DataCrunch.io](https://datacrunch.io/)
-- [ ] Add more scripts
+- [ ] Add more example codebase (pipeline)
+  - [ ] TensorFlow based Object Detection 
+  - [ ] PyTorch based Image Classification
+  - [ ] HuggingFace Transformers
 
 ## Brief description of each tools
 
