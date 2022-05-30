@@ -72,6 +72,14 @@ $ dvc stage add -n evaluate \
   - [X] [JarvisLabs.ai](https://jarvislabs.ai/)
   - [ ] [DataCrunch.io](https://datacrunch.io/)
   - [ ] [GCP Vertex AI Training](https://cloud.google.com/vertex-ai#section-9)
+- [ ] Integrate more managed services for management
+  - [ ] [W&B Artifact](https://wandb.ai/site) for dataset/model versioning and experiment tracking
+  - [ ] [HugginfFace](https://huggingface.co) for dataset/model versioning
+- [ ] Integrate more managed services for deployment
+  - [ ] [AKS](https://docs.microsoft.com/en-us/azure/aks/)
+  - [ ] [EKS](https://aws.amazon.com/ko/eks/)
+  - [ ] [App Engine](https://cloud.google.com/appengine/)
+  - [ ] [AWS Lambda](https://aws.amazon.com/ko/lambda/)
 - [ ] Add more example codebase (pipeline)
   - [ ] TensorFlow based Object Detection 
   - [ ] PyTorch based Image Classification
