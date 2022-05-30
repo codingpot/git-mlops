@@ -1,6 +1,6 @@
 # Git Based MLOps
 
-<img src='https://svgshare.com/i/hp7.svg' title='git-mlops-overview' />
+<img src='https://svgshare.com/i/htr.svg' title='git-mlops-overview' />
 
 This project shows how to realize MLOps in Git/GitHub. In order to achieve this aim, this project heavily leverages the toolse such as [DVC](https://dvc.org/), [DVC Studio](https://studio.iterative.ai/), [DVCLive](https://dvc.org/doc/dvclive) - all products built by [iterative.ai](https://iterative.ai/), [Google Drive](https://www.google.com/drive/), [Jarvislabs.ai](https://jarvislabs.ai/), and [HuggingFace Hub](https://github.com/huggingface/huggingface_hub).
 
