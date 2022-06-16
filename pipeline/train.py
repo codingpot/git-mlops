@@ -10,8 +10,10 @@ from pathlib import Path
 import tensorflow as tf
 from tensorflow.keras.applications import resnet50
 
-from dvclive.keras import DvcLiveCallback
 import modeling
+
+import wandb
+from wandb.keras import WandbCallback
 
 if len(sys.argv) != 2:
     sys.stderr.write("Arguments error. Usage:\n")
@@ -56,14 +58,22 @@ def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
-def run_train():
+def run_train(project_name, 
+              wandb_key):
+    wandb.login(
+        anonymous="never",
+        key=wandb_key
+    )
+    wandb_run = wandb.init(project=project_name,
+                           config=params)    
+
     train_size = params['train_size']
     train_step_size = train_size // params['batch_size']
 
     train_ds = _read_dataset(params['epoch'], params['batch_size'], train)
     test_ds = _read_dataset(params['epoch'], params['batch_size'], test)
 
-    dvcCallback = DvcLiveCallback()
+    wandbCallback = WandbCallback()
 
     m = modeling._build_keras_model()
     m = modeling._compile(m, float(params['lr']))
@@ -73,7 +83,7 @@ def run_train():
         epochs=params['epoch'],
         steps_per_epoch=train_step_size,
         validation_data=test_ds,
-        callbacks=[dvcCallback])
+        callbacks=[wandbCallback])
 
     m.save(output, 
            save_format='tf', 
@@ -81,4 +91,7 @@ def run_train():
 
     make_tarfile(f'{output}.tar.gz', output)
 
-run_train()
+project_name = os.environ["WANDB_PROJECT"]
+wandb_key = os.environment["WANDB_API_KEY"]
+
+run_train(project_name, wandb_key)
