@@ -58,14 +58,18 @@ def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
-def run_train(project_name, 
-              wandb_key):
+def run_train():
+    project_name = os.environ["WANDB_PROJECT"]
+    wandb_key = os.environ["WANDB_API_KEY"]
+    wandb_run_name = os.environ["WANDB_RUN_NAME"]
+
     wandb.login(
         anonymous="never",
         key=wandb_key
     )
-    wandb_run = wandb.init(project=project_name,
-                           config=params)    
+    _ = wandb.init(project=project_name,
+                   config=params,
+                   name=wandb_run_name)
 
     train_size = params['train_size']
     train_step_size = train_size // params['batch_size']
@@ -73,7 +77,8 @@ def run_train(project_name,
     train_ds = _read_dataset(params['epoch'], params['batch_size'], train)
     test_ds = _read_dataset(params['epoch'], params['batch_size'], test)
 
-    wandbCallback = WandbCallback()
+    wandbCallback = WandbCallback(training_data=train_ds, 
+                                  log_weights=(True), log_gradients=(True))
 
     m = modeling._build_keras_model()
     m = modeling._compile(m, float(params['lr']))
@@ -91,7 +96,4 @@ def run_train(project_name,
 
     make_tarfile(f'{output}.tar.gz', output)
 
-project_name = os.environ["WANDB_PROJECT"]
-wandb_key = os.environment["WANDB_API_KEY"]
-
-run_train(project_name, wandb_key)
+run_train()
