@@ -21,10 +21,11 @@ This project shows how to realize MLOps in Git/GitHub. In order to achieve this 
 4. Run `dvc add [ADDED FILE OR DIRECTORY]` to track your data with DVC
 5. Run `dvc remote add -d gdrive_storage gdrive://[ID of specific folder in gdrive]` to add Google Drive as the remote data storage
 6. Run `dvc push`, then URL to auth is provided. Copy and paste it to the browser, and autheticate
-7. Copy the content of `.dvc/tmp/gdrive-user-credentials.json` and put it as in [GitHub Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) with the name of `GDRIVE_CREDENTIALS`
-8. Run `git add . && git commit -m "initial commit" && git push origin main` to keep the initial setup
-9. Write your own pipeline under `pipeline` directory. Codes for basic image classification in TensorFlow are provided initially.
-10. Run the following `dvc stage add` for training stage
+7. Copy the content of `.dvc/tmp/gdrive-user-credentials.json` and put it as in [GitHub Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) with the name of `GDRIVE_CREDENTIAL`
+8. Add W&B PROJECT NAME and API KEY to GitHub Secret as `WANDB_PROJECT` and `WANDB_API_KEY` respectively.
+9. Run `git add . && git commit -m "initial commit" && git push origin main` to keep the initial setup
+10. Write your own pipeline under `pipeline` directory. Codes for basic image classification in TensorFlow are provided initially.
+11. Run the following `dvc stage add` for training stage
 ```bash
 $ dvc stage add -n train \
                 -p train.train_size,train.batch_size,train.epoch,train.lr \
@@ -32,23 +33,23 @@ $ dvc stage add -n train \
                 -o outputs/model \
                 python pipeline/train.py outputs/model
 ```
-10. Run the following `dvc stage add` for evaluate stage
+12. Run the following `dvc stage add` for evaluate stage
 ```bash
 $ dvc stage add -n evaluate \
                 -p evaluate.test,evaluate.batch_size \
                 -d pipeline/evaluate.py -d data/test -d outputs/model \
                 python pipeline/evaluate.py outputs/model
 ```
-11. Update `params.yaml` as you need.
-12. Run `git add . && git commit -m "add initial pipeline setup" && git push origin main`
-13. Run `dvc repro` to run the pipeline initially
-14. Run `dvc add outputs/model.tar.gz` to add compressed version of model 
-15. Run `dvc push outputs/model.tar.gz`
-16. Run `echo "/pipeline/__pycache__" >> .gitignore` to ignore unnecessary directory
-17. Run `git add . && git commit -m "add initial pipeline run" && git push origin main`
-18. Add access token and user email of [JarvisLabs.ai](https://jarvislabs.ai/) to GitHub Secret as `JARVISLABS_ACCESS_TOKEN` and `JARVISLABS_USER_EMAIL`
-19. Add GitHub access token to GitHub Secret as `GH_ACCESS_TOKEN`
-20. Create a PR and write `#train` as in comment (you have to be the onwer of the repo)
+13. Update `params.yaml` as you need.
+14. Run `git add . && git commit -m "add initial pipeline setup" && git push origin main`
+15. Run `dvc repro` to run the pipeline initially
+16. Run `dvc add outputs/model.tar.gz` to add compressed version of model 
+17. Run `dvc push outputs/model.tar.gz`
+18. Run `echo "/pipeline/__pycache__" >> .gitignore` to ignore unnecessary directory
+19. Run `git add . && git commit -m "add initial pipeline run" && git push origin main`
+20. Add access token and user email of [JarvisLabs.ai](https://jarvislabs.ai/) to GitHub Secret as `JARVISLABS_ACCESS_TOKEN` and `JARVISLABS_USER_EMAIL`
+21. Add GitHub access token to GitHub Secret as `GH_ACCESS_TOKEN`
+22. Create a PR and write `#train` as in comment (you have to be the onwer of the repo)
 
 ### HuggingFace Integration Setup
 
@@ -57,28 +58,6 @@ $ dvc stage add -n evaluate \
 3. Write `#deploy-hf` in comment of PR you want to deploy to HuggingFace Space
    - GitHub Action assumes your model is archieved as `model.tar.gz` under `outputs` directory
    - Algo GitHub Action assumes your HuggingFace Space app is written in [Gradio](https://gradio.app/) under `hf-space` directory. You need to change [`app_template.py`](https://github.com/codingpot/git-mlops/blob/main/hf-space/app_template.py) as you need(you shouldn't remove any environment variables in the file).
-
-## TODO
-
-- [X] Write solid steps to reproduce this repo for other tasks 
-- [X] Deploy experimental model to [HF Space](https://huggingface.co/spaces)
-- [ ] Deploy current model to [GKE](https://cloud.google.com/kubernetes-engine) with [auto TFServing deployment project](https://github.com/deep-diver/ml-deployment-k8s-tfserving)
-- [ ] Add more cloud providers offering GPU VMs
-  - [X] [JarvisLabs.ai](https://jarvislabs.ai/)
-  - [ ] [DataCrunch.io](https://datacrunch.io/)
-  - [ ] [GCP Vertex AI Training](https://cloud.google.com/vertex-ai#section-9)
-- [ ] Integrate more managed services for management
-  - [ ] [W&B Artifact](https://wandb.ai/site) for dataset/model versioning and experiment tracking
-  - [ ] [HugginfFace](https://huggingface.co) for dataset/model versioning
-- [ ] Integrate more managed services for deployment
-  - [ ] [AKS](https://docs.microsoft.com/en-us/azure/aks/)
-  - [ ] [EKS](https://aws.amazon.com/ko/eks/)
-  - [ ] [App Engine](https://cloud.google.com/appengine/)
-  - [ ] [AWS Lambda](https://aws.amazon.com/ko/lambda/)
-- [ ] Add more example codebase (pipeline)
-  - [ ] TensorFlow based Object Detection 
-  - [ ] PyTorch based Image Classification
-  - [ ] HuggingFace Transformers
 
 ## Brief description of each tools
 
