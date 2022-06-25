@@ -12,6 +12,10 @@ export GH_TOKEN='$GH_ACCESS_TOKEN'
 git config --global user.name "chansung"
 git config --global user.email "deep.diver.csp@gmail.com"
 
+# set W&B specific keys
+export WANDB_PROJECT='$WANDB_PROJECT'
+export WANDB_API_KEY='$WANDB_API_KEY'
+
 # move to the repo
 git clone https://github.com/codingpot/git-mlops.git
 
@@ -29,30 +33,19 @@ echo '$GDRIVE_CREDENTIAL' > .dvc/tmp/gdrive-user-credentials.json
 # pull data
 dvc pull
 
-exp_names=("base")
-dvc exp run
-
-dvc exp show > exp_results.txt
-exp_id_strings=`grep -oe "exp-[a-z0-9]\+" exp_results.txt`
-exp_ids=($exp_id_strings)
-cur_branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+export WANDB_RUN_NAME=$CUR_BRANCH
+dvc repro
 
 exp_result=$(dvc exp show --only-changed --md)
-gh pr comment $CUR_PR_ID --body "$exp_result"
+wandb_url="https://wandb.ai/codingpot/git-mlops"
+gh pr comment $CUR_PR_ID --body "[Visit W&B Log Page for this Pull Request]($wandb_url)"
 
 git reset --hard
-for idx in ${!exp_names[@]}
-do
-   echo ${exp_ids[$idx]}
-   echo ${exp_names[$idx]}
-   dvc exp branch ${exp_ids[$idx]} ${exp_names[$idx]}
-   dvc add outputs/model.tar.gz
-   dvc push outputs/model.tar.gz
-   git branch -m ${exp_names[$idx]} exp-$cur_branch-${exp_names[$idx]}
-   git checkout exp-$cur_branch-${exp_names[$idx]}
-   git push origin exp-$cur_branch-${exp_names[$idx]}
-   git checkout $CUR_BRANCH
-done
+
+echo ${exp_ids[$idx]}
+echo ${exp_names[$idx]}
+dvc add outputs/model.tar.gz
+dvc push outputs/model.tar.gz
 
 VM_ID=$(tail -n 2 /home/.jarviscloud/jarvisconfig | head -n 1)
 python clouds/jarvislabs.py vm destroy $CLOUD_AT $CLOUD_ID $VM_ID
