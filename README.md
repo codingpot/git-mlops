@@ -29,10 +29,6 @@ This project shows how to realize MLOps in Git/GitHub. In order to achieve this 
 $ dvc stage add -n train \
                 -p train.train_size,train.batch_size,train.epoch,train.lr \
                 -d pipeline/modeling.py -d pipeline/train.py -d data \
-                --plots-no-cache dvclive/scalars/loss.tsv \
-                --plots-no-cache dvclive/scalars/sparse_categorical_accuracy.tsv \
-                --plots-no-cache dvclive/scalars/val_loss.tsv \
-                --plots-no-cache dvclive/scalars/val_sparse_categorical_accuracy.tsv \
                 -o outputs/model \
                 python pipeline/train.py outputs/model
 ```
@@ -41,7 +37,6 @@ $ dvc stage add -n train \
 $ dvc stage add -n evaluate \
                 -p evaluate.test,evaluate.batch_size \
                 -d pipeline/evaluate.py -d data/test -d outputs/model \
-                -M outputs/metrics.json \
                 python pipeline/evaluate.py outputs/model
 ```
 11. Update `params.yaml` as you need.
