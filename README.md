@@ -57,7 +57,7 @@ $ dvc stage add -n evaluate \
 2. Add username of HugginfFace to GitHub Secret as `HF_USER_ID`
 3. Write `#deploy-hf` in comment of PR you want to deploy to HuggingFace Space
    - GitHub Action assumes your model is archieved as `model.tar.gz` under `outputs` directory
-   - Algo GitHub Action assumes your HuggingFace Space app is written in [Gradio](https://gradio.app/) under `hf-space` directory. You need to change [`app_template.py`](https://github.com/codingpot/git-mlops/blob/main/hf-space/app_template.py) as you need(you shouldn't remove any environment variables in the file).
+   - GitHub Action assumes your HuggingFace Space app is written in [Gradio](https://gradio.app/) under `hf-space` directory. You need to change [`app_template.py`](https://github.com/codingpot/git-mlops/blob/main/hf-space/app_template.py) as you need(you shouldn't remove any environment variables in the file).
 
 ## Brief description of each tools
 
