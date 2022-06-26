@@ -42,7 +42,7 @@ $ dvc stage add -n train \
                 -p train.train_size,train.batch_size,train.epoch,train.lr \
                 -d pipeline/modeling.py -d pipeline/train_wandb.py -d data \
                 -o outputs/model \
-                python pipeline/train.py outputs/model
+                python pipeline/train_wandb.py outputs/model
 ```
 11. Run the following `dvc stage add` for evaluate stage
 ```bash
