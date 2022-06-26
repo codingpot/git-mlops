@@ -1,0 +1,68 @@
+name: "Run experiments with JarvisLabs and W&B"
+description: "Run experiments with JarvisLabs and W&B"
+inputs:
+  CUR_BRANCH:
+    required: true
+  CUR_PR_ID:
+    required: true
+  GDRIVE_CREDENTIAL:
+    required: true
+  GH_ACCESS_TOKEN:
+    required: true
+  JARVISLABS_ID:
+    required: true
+  JARVISLABS_ACCESS_TOKEN:
+    required: true
+  WANDB_PROJECT:
+    required: true
+  WANDB_API_KEY:
+    required: true
+runs:
+  using: "composite"
+  steps:
+      - name: prepare script
+        env:
+          CUR_BRANCH: $CUR_BRANCH
+          CUR_PR_ID: $CUR_PR_ID
+          GDRIVE_CREDENTIAL: $GDRIVE_CREDENTIAL
+          GH_ACCESS_TOKEN: $GH_ACCESS_TOKEN
+          CLOUD_ID: $JARVISLABS_ID
+          CLOUD_AT: $JARVISLABS_ACCESS_TOKEN
+          WANDB_PROJECT: $WANDB_PROJECT
+          WANDB_API_KEY: $WANDB_API_KEY
+        run: |
+          envsubst \
+            '$CUR_BRANCH, \
+             $CUR_PR_ID, \
+             $GDRIVE_CREDENTIAL, \
+             $GH_ACCESS_TOKEN, \
+             $CLOUD_ID, \
+             $CLOUD_AT' \
+             < scripts/js_exp_wandb.sh \
+             > scripts/js_exp_wandb_tmp.sh
+             
+      - name: install jarvislabs client
+        run: |
+          pip install typer
+          pip install git+https://github.com/jarvislabsai/jlclient.git
+          
+      - name: add script to jarvislabs
+        id: add_script
+        run: |
+          python clouds/jarvislabs.py \
+            script add \
+              ${{ env.CLOUD_AT }} ${{ env.CLOUD_ID }} scripts/js_exp_wandb_tmp.sh \
+                > outputs.txt
+          echo "::set-output name=script_id::$(cat outputs.txt)"
+          
+      - name: create vm on jarvislabs
+        run: |
+          python clouds/jarvislabs.py \
+            vm create \
+              ${{ env.CLOUD_AT }} ${{ env.CLOUD_ID }} ${{ steps.add_script.outputs.script_id }}
+              
+      - name: remove script from jarvislabs
+        run: |
+          python clouds/jarvislabs.py \
+            script remove \
+              ${{ env.CLOUD_AT }} ${{ env.CLOUD_ID }} ${{ steps.add_script.outputs.script_id }}

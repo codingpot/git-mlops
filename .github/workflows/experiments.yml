@@ -1,0 +1,82 @@
+name: Train Trigger
+
+on:
+  pull_request:
+    types: [opened]
+    
+  issue_comment:
+    types: [created]
+
+jobs:
+  experiments-on-jarvislabs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: octokit/request-action@v2.0.0
+        name: GitHub API Request
+        id: request
+        with:
+          route: ${{ github.event.issue.pull_request.url }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get PR informations
+        id: pr_data  
+        run: |
+          echo "::set-output name=number::${{ fromJson(steps.request.outputs.data).number }}"
+          echo "::set-output name=branch::${{ fromJson(steps.request.outputs.data).head.ref }}"
+          echo "::set-output name=repo_owner::${{ github.event.repository.owner.login }}"
+          echo "::set-output name=comment_owner::${{ github.event.sender.login }}"
+          echo "::set-output name=comment::${{ github.event.comment.body }}"
+          
+      - name: Extract comment
+        if: ${{ steps.pr_data.outputs.repo_owner == steps.pr_data.outputs.comment_owner }}
+        run: |
+          echo "Eligible!!"
+        
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        name: Listen to comment on PR (training)
+        id: check_dvclive
+        if: ${{ steps.pr_data.outputs.repo_owner == steps.pr_data.outputs.comment_owner }}
+        with:
+          trigger: '#train --with dvclive'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        name: Listen to comment on PR (training)
+        id: check_wandb
+        if: ${{ steps.pr_data.outputs.repo_owner == steps.pr_data.outputs.comment_owner }}
+        with:
+          trigger: '#train --with wandb'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+
+      - uses: actions/checkout@v3
+        name: clone branch of PR
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ steps.pr_data.outputs.branch }}
+
+      - name: clone branch of PR
+        if: steps.check_dvclive.outputs.triggered == 'true'
+        uses: ./.github/actions/exp/jl-dvc
+        with:
+          CUR_BRANCH: ${{ steps.pr_data.outputs.branch }}
+          CUR_PR_ID: ${{ steps.pr_data.outputs.number }}
+          GDRIVE_CREDENTIAL: ${{ secrets.GDRIVE_CREDENTIAL }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          JARVISLABS_ID: ${{ secrets.JARVISLABS_USER_EMAIL }}
+          JARVISLABS_ACCESS_TOKEN: ${{ secrets.JARVISLABS_ACCESS_TOKEN }}
+
+      - name: clone branch of PR
+        if: steps.check_wandb.outputs.triggered == 'true'
+        uses: ./.github/actions/exp/jl-wandb
+        with:
+          CUR_BRANCH: ${{ steps.pr_data.outputs.branch }}
+          CUR_PR_ID: ${{ steps.pr_data.outputs.number }}
+          GDRIVE_CREDENTIAL: ${{ secrets.GDRIVE_CREDENTIAL }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          JARVISLABS_ID: ${{ secrets.JARVISLABS_USER_EMAIL }}
+          JARVISLABS_ACCESS_TOKEN: ${{ secrets.JARVISLABS_ACCESS_TOKEN }}
+          WANDB_PROJECT: ${{ secrets.WANDB_PROJECT }}
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
