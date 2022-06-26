@@ -87,6 +87,7 @@ $ dvc stage add -n evaluate \
 ## TODO
 
 - [X] Write solid steps to reproduce this repo for other tasks 
+- [X] Support W&B for tracking the training process instead of DVCLive
 - [X] Deploy experimental model to [HF Space](https://huggingface.co/spaces)
 - [ ] Deploy current model to [GKE](https://cloud.google.com/kubernetes-engine) with [auto TFServing deployment project](https://github.com/deep-diver/ml-deployment-k8s-tfserving)
 - [ ] Add more cloud providers offering GPU VMs
