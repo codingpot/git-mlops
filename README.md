@@ -68,12 +68,13 @@ $ dvc stage add -n evaluate \
 18. Run `git add . && git commit -m "add initial pipeline run" && git push origin main`
 19. Add access token and user email of [JarvisLabs.ai](https://jarvislabs.ai/) to GitHub Secret as `JARVISLABS_ACCESS_TOKEN` and `JARVISLABS_USER_EMAIL`
 20. Add GitHub access token to GitHub Secret as `GH_ACCESS_TOKEN`
-21. Create a PR and write `#train` as in comment (you have to be the onwer of the repo)
+21. Create a PR and write `#train --with dvc` as in comment (you have to be the onwer of the repo)
 
 ### W&B Integration Setup
 
 1. Add W&B's project name to GitHub Secret as `WANDB_PROJECT`
 2. Add W&B's API KEY to GitHub Secret as `WANDB_API_KEY`
+3. Use `#train --with wandb` instead of `#train --with dvc`
 
 ### HuggingFace Integration Setup
 
