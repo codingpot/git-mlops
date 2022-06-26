@@ -40,9 +40,9 @@ $ dvc stage add -n train \
 # if you want to use W&B for tracking training progress
 $ dvc stage add -n train \
                 -p train.train_size,train.batch_size,train.epoch,train.lr \
-                -d pipeline/modeling.py -d pipeline/train.py -d data \
+                -d pipeline/modeling.py -d pipeline/train_wandb.py -d data \
                 -o outputs/model \
-                python pipeline/train.py outputs/model
+                python pipeline/train_wandb.py outputs/model
 ```
 11. Run the following `dvc stage add` for evaluate stage
 ```bash
@@ -68,12 +68,13 @@ $ dvc stage add -n evaluate \
 18. Run `git add . && git commit -m "add initial pipeline run" && git push origin main`
 19. Add access token and user email of [JarvisLabs.ai](https://jarvislabs.ai/) to GitHub Secret as `JARVISLABS_ACCESS_TOKEN` and `JARVISLABS_USER_EMAIL`
 20. Add GitHub access token to GitHub Secret as `GH_ACCESS_TOKEN`
-21. Create a PR and write `#train` as in comment (you have to be the onwer of the repo)
+21. Create a PR and write `#train --with dvc` as in comment (you have to be the onwer of the repo)
 
 ### W&B Integration Setup
 
 1. Add W&B's project name to GitHub Secret as `WANDB_PROJECT`
 2. Add W&B's API KEY to GitHub Secret as `WANDB_API_KEY`
+3. Use `#train --with wandb` instead of `#train --with dvc`
 
 ### HuggingFace Integration Setup
 
