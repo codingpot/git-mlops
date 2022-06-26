@@ -1,4 +1,5 @@
 dvc[gdrive]==2.10.2
+wandb==0.12.19
 tensorflow==2.8
 typer==0.4.1
 docopt==0.6.2
