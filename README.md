@@ -40,7 +40,7 @@ $ dvc stage add -n train \
 # if you want to use W&B for tracking training progress
 $ dvc stage add -n train \
                 -p train.train_size,train.batch_size,train.epoch,train.lr \
-                -d pipeline/modeling.py -d pipeline/train.py -d data \
+                -d pipeline/modeling.py -d pipeline/train_wandb.py -d data \
                 -o outputs/model \
                 python pipeline/train.py outputs/model
 ```
